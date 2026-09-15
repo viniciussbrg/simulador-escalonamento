@@ -19,6 +19,17 @@ from .motor import ALGORITMOS, PROTOCOLOS, SimulacaoErro, simular
 
 
 class AplicacaoSimulador(tk.Tk):
+    CORES_TAREFAS = (
+        "#14b8a6",
+        "#2dd4bf",
+        "#0ea5a4",
+        "#5eead4",
+        "#06b6d4",
+        "#22c55e",
+        "#38bdf8",
+        "#a3e635",
+    )
+
     def __init__(self) -> None:
         super().__init__()
         self.title("Simulador de Escalonamento de Tarefas")
@@ -60,29 +71,49 @@ class AplicacaoSimulador(tk.Tk):
             style.theme_use("clam")
         except tk.TclError:
             pass
-        style.configure("TFrame", background="#f7f8fb")
-        style.configure("TLabel", background="#f7f8fb", foreground="#20242a", font=("Segoe UI", 10))
-        style.configure("Title.TLabel", font=("Segoe UI", 18, "bold"))
-        style.configure("Section.TLabel", font=("Segoe UI", 11, "bold"))
-        style.configure("TButton", font=("Segoe UI", 10), padding=(10, 5))
-        style.configure("Treeview", font=("Segoe UI", 9), rowheight=26)
-        style.configure("Treeview.Heading", font=("Segoe UI", 9, "bold"))
+        self.configure(background="#edf5f4")
+        style.configure("TFrame", background="#ffffff")
+        style.configure("TLabel", background="#ffffff", foreground="#1f3534", font=("Segoe UI", 10))
+        style.configure("Title.TLabel", font=("Segoe UI", 21, "bold"), foreground="#173b3a")
+        style.configure("Subtitle.TLabel", font=("Segoe UI", 10), foreground="#587270")
+        style.configure("Section.TLabel", font=("Segoe UI", 11, "bold"), foreground="#0f766e")
+        style.configure("TButton", background="#f1f5f4", foreground="#24403e", font=("Segoe UI", 10), padding=(10, 6), borderwidth=1, bordercolor="#cbd9d7")
+        style.map("TButton", background=[("active", "#e0ecea"), ("pressed", "#d1e2df")])
+        style.configure("Accent.TButton", background="#0f766e", foreground="#ffffff", font=("Segoe UI", 10, "bold"), padding=(12, 7), borderwidth=0)
+        style.map("Accent.TButton", background=[("active", "#0d9488"), ("pressed", "#115e59")])
+        style.configure("TEntry", fieldbackground="#ffffff", foreground="#1f3534", insertcolor="#0f766e", bordercolor="#b8cecb", lightcolor="#b8cecb", darkcolor="#b8cecb", padding=6)
+        style.configure("TCombobox", fieldbackground="#ffffff", background="#f1f5f4", foreground="#1f3534", arrowcolor="#0f766e", padding=5)
+        style.map("TCombobox", fieldbackground=[("readonly", "#ffffff")], foreground=[("readonly", "#1f3534")], selectbackground=[("readonly", "#e0ecea")], selectforeground=[("readonly", "#1f3534")])
+        style.configure("TCheckbutton", background="#ffffff", foreground="#1f3534")
+        style.map("TCheckbutton", background=[("active", "#ffffff")], foreground=[("active", "#0f766e")])
+        style.configure("Treeview", background="#ffffff", fieldbackground="#ffffff", foreground="#1f3534", font=("Segoe UI", 9), rowheight=28, bordercolor="#cbd9d7")
+        style.map("Treeview", background=[("selected", "#d3eeea")], foreground=[("selected", "#134e4a")])
+        style.configure("Treeview.Heading", background="#eff6f5", foreground="#28514e", font=("Segoe UI", 9, "bold"), relief="flat", padding=(8, 7))
+        style.map("Treeview.Heading", background=[("active", "#dcecea")])
+        style.configure("TNotebook", background="#ffffff", borderwidth=0)
+        style.configure("TNotebook.Tab", background="#eff4f3", foreground="#587270", padding=(16, 9), font=("Segoe UI", 10, "bold"))
+        style.map("TNotebook.Tab", background=[("selected", "#ffffff"), ("active", "#e0ecea")], foreground=[("selected", "#0f766e"), ("active", "#28514e")])
+        style.configure("Horizontal.TScrollbar", background="#a9c5c1", troughcolor="#eff4f3", bordercolor="#eff4f3", arrowcolor="#0f766e")
+        style.configure("Vertical.TScrollbar", background="#a9c5c1", troughcolor="#eff4f3", bordercolor="#eff4f3", arrowcolor="#0f766e")
 
     def _montar_interface(self) -> None:
         container = ttk.Frame(self, padding=14)
         container.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(container, text="Simulador de Escalonamento de Tarefas", style="Title.TLabel").pack(anchor=tk.W)
+        cabecalho = ttk.Frame(container)
+        cabecalho.pack(fill=tk.X)
+        ttk.Label(cabecalho, text="Simulador de Escalonamento", style="Title.TLabel").pack(anchor=tk.W)
+        ttk.Label(cabecalho, text="Configure tarefas, execute políticas e compare o comportamento da CPU.", style="Subtitle.TLabel").pack(anchor=tk.W, pady=(2, 0))
 
-        abas = ttk.Notebook(container)
-        abas.pack(fill=tk.BOTH, expand=True, pady=(12, 0))
+        self.abas = ttk.Notebook(container)
+        self.abas.pack(fill=tk.BOTH, expand=True, pady=(16, 0))
 
-        self.aba_tarefas = ttk.Frame(abas, padding=12)
-        self.aba_resultados = ttk.Frame(abas, padding=12)
-        self.aba_lote = ttk.Frame(abas, padding=12)
-        abas.add(self.aba_tarefas, text="Tarefas e simulacao")
-        abas.add(self.aba_resultados, text="Resultados")
-        abas.add(self.aba_lote, text="Comparacao em lote")
+        self.aba_tarefas = ttk.Frame(self.abas, padding=16)
+        self.aba_resultados = ttk.Frame(self.abas, padding=16)
+        self.aba_lote = ttk.Frame(self.abas, padding=16)
+        self.abas.add(self.aba_tarefas, text="Tarefas e simulação")
+        self.abas.add(self.aba_resultados, text="Resultados")
+        self.abas.add(self.aba_lote, text="Comparação em lote")
 
         self._montar_aba_tarefas()
         self._montar_aba_resultados()
@@ -94,8 +125,22 @@ class AplicacaoSimulador(tk.Tk):
         painel.columnconfigure(1, weight=1)
         painel.rowconfigure(0, weight=1)
 
-        formulario = ttk.Frame(painel)
-        formulario.grid(row=0, column=0, sticky="nsw", padx=(0, 16))
+        sidebar = ttk.Frame(painel)
+        sidebar.grid(row=0, column=0, sticky="nsew", padx=(0, 16))
+        sidebar.rowconfigure(0, weight=1)
+        sidebar.columnconfigure(0, weight=1)
+        self.canvas_sidebar = tk.Canvas(sidebar, background="#ffffff", highlightthickness=0, width=252)
+        self.canvas_sidebar.grid(row=0, column=0, sticky="nsew")
+        scroll_sidebar = ttk.Scrollbar(sidebar, orient=tk.VERTICAL, command=self.canvas_sidebar.yview)
+        scroll_sidebar.grid(row=0, column=1, sticky="ns")
+        self.canvas_sidebar.configure(yscrollcommand=scroll_sidebar.set)
+        self.canvas_sidebar.bind("<Enter>", self._ativar_scroll_sidebar)
+        self.canvas_sidebar.bind("<Leave>", self._desativar_scroll_sidebar)
+
+        formulario = ttk.Frame(self.canvas_sidebar)
+        self._janela_sidebar = self.canvas_sidebar.create_window((0, 0), window=formulario, anchor=tk.NW)
+        formulario.bind("<Configure>", self._atualizar_scroll_sidebar)
+        self.canvas_sidebar.bind("<Configure>", self._ajustar_largura_sidebar)
 
         ttk.Label(formulario, text="Cadastro", style="Section.TLabel").grid(row=0, column=0, columnspan=2, sticky=tk.W, pady=(0, 8))
         self._campo(formulario, "Quantidade", self.quantidade_var, 1, largura=12)
@@ -105,21 +150,21 @@ class AplicacaoSimulador(tk.Tk):
         self._campo(formulario, "Ingresso", self.ingresso_var, 4, largura=12)
         self._campo(formulario, "tp", self.tp_var, 5, largura=12)
         self._campo(formulario, "Prioridade", self.prioridade_var, 6, largura=12)
-        self._campo(formulario, "R apos exec.", self.recurso_inicio_var, 7, largura=12)
-        self._campo(formulario, "R duracao", self.recurso_duracao_var, 8, largura=12)
+        self._campo(formulario, "R após exec.", self.recurso_inicio_var, 7, largura=12)
+        self._campo(formulario, "R duração", self.recurso_duracao_var, 8, largura=12)
 
         ttk.Button(formulario, text="Adicionar / atualizar", command=self._adicionar_ou_atualizar).grid(row=9, column=0, columnspan=2, sticky="ew", pady=(12, 4))
         ttk.Button(formulario, text="Remover selecionada", command=self._remover_tarefa).grid(row=10, column=0, columnspan=2, sticky="ew", pady=4)
         ttk.Button(formulario, text="Limpar tarefas", command=self._limpar_tarefas).grid(row=11, column=0, columnspan=2, sticky="ew", pady=4)
         ttk.Button(formulario, text="Sortear tarefas", command=self._sortear_tarefas).grid(row=12, column=0, columnspan=2, sticky="ew", pady=(12, 4))
-        ttk.Button(formulario, text="Salvar cenario", command=self._salvar_cenario).grid(row=13, column=0, columnspan=2, sticky="ew", pady=4)
-        ttk.Button(formulario, text="Carregar cenario", command=self._abrir_cenario).grid(row=14, column=0, columnspan=2, sticky="ew", pady=4)
+        ttk.Button(formulario, text="Salvar cenário", command=self._salvar_cenario).grid(row=13, column=0, columnspan=2, sticky="ew", pady=4)
+        ttk.Button(formulario, text="Carregar cenário", command=self._abrir_cenario).grid(row=14, column=0, columnspan=2, sticky="ew", pady=4)
 
-        ttk.Label(formulario, text="Cenarios oficiais", style="Section.TLabel").grid(row=15, column=0, columnspan=2, sticky=tk.W, pady=(18, 8))
+        ttk.Label(formulario, text="Cenários oficiais", style="Section.TLabel").grid(row=15, column=0, columnspan=2, sticky=tk.W, pady=(18, 8))
         ttk.Button(formulario, text="Aula 5", command=lambda: self._carregar_cenario(cenario_aula5())).grid(row=16, column=0, columnspan=2, sticky="ew", pady=3)
-        ttk.Button(formulario, text="Inversao", command=self._carregar_inversao).grid(row=17, column=0, columnspan=2, sticky="ew", pady=3)
+        ttk.Button(formulario, text="Inversão", command=self._carregar_inversao).grid(row=17, column=0, columnspan=2, sticky="ew", pady=3)
         ttk.Button(formulario, text="Teto sem disputa", command=self._carregar_teto_sem_disputa).grid(row=18, column=0, columnspan=2, sticky="ew", pady=3)
-        ttk.Button(formulario, text="Inanicao", command=self._carregar_inanicao).grid(row=19, column=0, columnspan=2, sticky="ew", pady=3)
+        ttk.Button(formulario, text="Inanição", command=self._carregar_inanicao).grid(row=19, column=0, columnspan=2, sticky="ew", pady=3)
 
         direita = ttk.Frame(painel)
         direita.grid(row=0, column=1, sticky="nsew")
@@ -134,8 +179,8 @@ class AplicacaoSimulador(tk.Tk):
             "ingresso": "Ingresso",
             "tp": "tp",
             "prioridade": "Prioridade",
-            "recurso_inicio": "R apos exec.",
-            "recurso_duracao": "R duracao",
+            "recurso_inicio": "R após exec.",
+            "recurso_duracao": "R duração",
         }
         for coluna in colunas:
             self.tabela_tarefas.heading(coluna, text=titulos[coluna])
@@ -166,13 +211,13 @@ class AplicacaoSimulador(tk.Tk):
         ttk.Label(parametros, text="alpha").grid(row=0, column=5, sticky=tk.W)
         ttk.Entry(parametros, textvariable=self.alpha_var, width=10).grid(row=1, column=5, sticky="ew")
 
-        ttk.Button(direita, text="Simular", command=self._executar_simulacao).grid(row=3, column=0, sticky="ew", pady=(14, 0))
+        ttk.Button(direita, text="Simular e ver resultados", command=self._executar_simulacao, style="Accent.TButton").grid(row=3, column=0, sticky="ew", pady=(16, 0))
 
     def _montar_aba_resultados(self) -> None:
         self.aba_resultados.rowconfigure(3, weight=1)
         self.aba_resultados.columnconfigure(0, weight=1)
 
-        self.resumo_var = tk.StringVar(value="Execute uma simulacao para visualizar as metricas.")
+        self.resumo_var = tk.StringVar(value="Execute uma simulação para visualizar as métricas.")
         ttk.Label(self.aba_resultados, textvariable=self.resumo_var, style="Section.TLabel").grid(row=0, column=0, sticky=tk.W)
 
         colunas = ("id", "ingresso", "tp", "prioridade", "conclusao", "tt", "tw", "primeira")
@@ -182,10 +227,10 @@ class AplicacaoSimulador(tk.Tk):
             "ingresso": "Ingresso",
             "tp": "tp",
             "prioridade": "Prioridade",
-            "conclusao": "Conclusao",
+            "conclusao": "Conclusão",
             "tt": "tt",
             "tw": "tw",
-            "primeira": "Ate 1a exec.",
+            "primeira": "Até 1a exec.",
         }
         for coluna in colunas:
             self.tabela_metricas.heading(coluna, text=titulos[coluna])
@@ -200,15 +245,18 @@ class AplicacaoSimulador(tk.Tk):
         canvas_frame.rowconfigure(0, weight=1)
         canvas_frame.columnconfigure(0, weight=1)
 
-        self.canvas = tk.Canvas(canvas_frame, background="#ffffff", highlightthickness=1, highlightbackground="#d5d9e2")
+        self.canvas = tk.Canvas(canvas_frame, background="#ffffff", highlightthickness=1, highlightbackground="#cbd9d7")
         self.canvas.grid(row=0, column=0, sticky="nsew")
+        self.canvas.bind("<MouseWheel>", self._rolar_resultados)
+        self.canvas.bind("<Button-4>", self._rolar_resultados)
+        self.canvas.bind("<Button-5>", self._rolar_resultados)
         scroll_x = ttk.Scrollbar(canvas_frame, orient=tk.HORIZONTAL, command=self.canvas.xview)
         scroll_y = ttk.Scrollbar(canvas_frame, orient=tk.VERTICAL, command=self.canvas.yview)
         scroll_x.grid(row=1, column=0, sticky="ew")
         scroll_y.grid(row=0, column=1, sticky="ns")
         self.canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
 
-        self.sequencia_texto = tk.Text(self.aba_resultados, height=4, wrap=tk.WORD, font=("Consolas", 9))
+        self.sequencia_texto = tk.Text(self.aba_resultados, height=4, wrap=tk.WORD, font=("Consolas", 9), background="#f5f9f8", foreground="#24403e", insertbackground="#0f766e", relief=tk.FLAT, padx=10, pady=8)
         self.sequencia_texto.grid(row=4, column=0, sticky="ew", pady=(10, 0))
 
     def _montar_aba_lote(self) -> None:
@@ -217,26 +265,26 @@ class AplicacaoSimulador(tk.Tk):
         for coluna in range(7):
             topo.columnconfigure(coluna, weight=1)
 
-        self._campo_lote(topo, "Cenarios", self.lote_cenarios_var, 0)
+        self._campo_lote(topo, "Cenários", self.lote_cenarios_var, 0)
         self._campo_lote(topo, "Tarefas", self.lote_tarefas_var, 1)
-        self._campo_lote(topo, "Ingresso max.", self.lote_ingresso_var, 2)
-        self._campo_lote(topo, "tp max.", self.lote_tp_var, 3)
-        self._campo_lote(topo, "Prioridade max.", self.lote_prioridade_var, 4)
+        self._campo_lote(topo, "Ingresso máx.", self.lote_ingresso_var, 2)
+        self._campo_lote(topo, "tp máx.", self.lote_tp_var, 3)
+        self._campo_lote(topo, "Prioridade máx.", self.lote_prioridade_var, 4)
         ttk.Button(topo, text="Executar lote", command=self._executar_lote).grid(row=1, column=5, columnspan=2, sticky="ew", padx=(8, 0))
 
         colunas = ("algoritmo", "tt", "tw", "primeira")
         self.tabela_lote = ttk.Treeview(self.aba_lote, columns=colunas, show="headings", height=9)
         for coluna, titulo in {
             "algoritmo": "Algoritmo",
-            "tt": "Media tt",
-            "tw": "Media tw",
-            "primeira": "Media ate 1a exec.",
+            "tt": "Média tt",
+            "tw": "Média tw",
+            "primeira": "Média até 1a exec.",
         }.items():
             self.tabela_lote.heading(coluna, text=titulo)
             self.tabela_lote.column(coluna, width=180, anchor=tk.CENTER)
         self.tabela_lote.pack(fill=tk.BOTH, expand=True, pady=(14, 10))
 
-        self.lote_info_var = tk.StringVar(value="O lote sorteia cenarios diferentes e compara os seis algoritmos pelas medias.")
+        self.lote_info_var = tk.StringVar(value="O lote sorteia cenários diferentes e compara os seis algoritmos pelas médias.")
         ttk.Label(self.aba_lote, textvariable=self.lote_info_var).pack(anchor=tk.W)
 
     def _campo(self, pai: ttk.Frame, texto: str, variavel: tk.StringVar, linha: int, largura: int = 16) -> None:
@@ -246,6 +294,29 @@ class AplicacaoSimulador(tk.Tk):
     def _campo_lote(self, pai: ttk.Frame, texto: str, variavel: tk.StringVar, coluna: int) -> None:
         ttk.Label(pai, text=texto).grid(row=0, column=coluna, sticky=tk.W, padx=(0, 8))
         ttk.Entry(pai, textvariable=variavel, width=12).grid(row=1, column=coluna, sticky="ew", padx=(0, 8))
+
+    def _atualizar_scroll_sidebar(self, _evento: object) -> None:
+        self.canvas_sidebar.configure(scrollregion=self.canvas_sidebar.bbox("all"))
+
+    def _ajustar_largura_sidebar(self, evento: tk.Event) -> None:
+        self.canvas_sidebar.itemconfigure(self._janela_sidebar, width=evento.width)
+
+    def _ativar_scroll_sidebar(self, _evento: object) -> None:
+        self.bind_all("<MouseWheel>", self._rolar_sidebar)
+
+    def _desativar_scroll_sidebar(self, _evento: object) -> None:
+        self.unbind_all("<MouseWheel>")
+
+    def _rolar_sidebar(self, evento: tk.Event) -> None:
+        self.canvas_sidebar.yview_scroll(-int(evento.delta / 120), "units")
+
+    def _rolar_resultados(self, evento: tk.Event) -> None:
+        if getattr(evento, "num", None) == 4:
+            self.canvas.yview_scroll(-1, "units")
+        elif getattr(evento, "num", None) == 5:
+            self.canvas.yview_scroll(1, "units")
+        elif getattr(evento, "delta", 0):
+            self.canvas.yview_scroll(-int(evento.delta / 120), "units")
 
     def _aplicar_quantidade(self) -> None:
         try:
@@ -293,10 +364,10 @@ class AplicacaoSimulador(tk.Tk):
         try:
             simular(self.tarefas, "FCFS", ttc=0)
             caminho = filedialog.asksaveasfilename(
-                title="Salvar cenario",
+                title="Salvar cenário",
                 defaultextension=".json",
-                filetypes=[("Cenarios JSON", "*.json"), ("Todos os arquivos", "*.*")],
-                initialfile="cenario.json",
+                filetypes=[("Cenários JSON", "*.json"), ("Todos os arquivos", "*.*")],
+                initialfile="cenário.json",
             )
             if caminho:
                 salvar_cenario(caminho, self.tarefas)
@@ -305,8 +376,8 @@ class AplicacaoSimulador(tk.Tk):
 
     def _abrir_cenario(self) -> None:
         caminho = filedialog.askopenfilename(
-            title="Carregar cenario",
-            filetypes=[("Cenarios JSON", "*.json"), ("Todos os arquivos", "*.*")],
+            title="Carregar cenário",
+            filetypes=[("Cenários JSON", "*.json"), ("Todos os arquivos", "*.*")],
         )
         if not caminho:
             return
@@ -360,17 +431,18 @@ class AplicacaoSimulador(tk.Tk):
             )
             self.resultado = resultado
             self._mostrar_resultado(resultado)
+            self.abas.select(self.aba_resultados)
         except Exception as erro:
             self._mostrar_erro(erro)
 
     def _executar_lote(self) -> None:
         try:
             linhas = comparar_lote(
-                quantidade_cenarios=self._inteiro(self.lote_cenarios_var.get(), "Cenarios"),
+                quantidade_cenarios=self._inteiro(self.lote_cenarios_var.get(), "Cenários"),
                 quantidade_tarefas=self._inteiro(self.lote_tarefas_var.get(), "Tarefas"),
-                ingresso_max=self._inteiro(self.lote_ingresso_var.get(), "Ingresso maximo"),
-                tp_max=self._inteiro(self.lote_tp_var.get(), "tp maximo"),
-                prioridade_max=self._inteiro(self.lote_prioridade_var.get(), "Prioridade maxima"),
+                ingresso_max=self._inteiro(self.lote_ingresso_var.get(), "Ingresso máximo"),
+                tp_max=self._inteiro(self.lote_tp_var.get(), "tp máximo"),
+                prioridade_max=self._inteiro(self.lote_prioridade_var.get(), "Prioridade máxima"),
                 quantum=self._inteiro(self.quantum_var.get(), "Quantum"),
                 ttc=self._inteiro(self.ttc_var.get(), "ttc"),
             )
@@ -389,7 +461,7 @@ class AplicacaoSimulador(tk.Tk):
                 )
             menor_tw = min(linhas, key=lambda item: item["tw"])["algoritmo"]
             menor_primeira = min(linhas, key=lambda item: item["primeira_execucao"])["algoritmo"]
-            self.lote_info_var.set(f"Menor media tw: {menor_tw}. Menor media ate 1a execucao: {menor_primeira}.")
+            self.lote_info_var.set(f"Menor média tw: {menor_tw}. Menor média até 1a execução: {menor_primeira}.")
         except Exception as erro:
             self._mostrar_erro(erro)
 
@@ -415,18 +487,18 @@ class AplicacaoSimulador(tk.Tk):
         eficiencia = (
             f"{resultado.eficiencia:.3f}"
             if resultado.eficiencia is not None
-            else "nao definida para algoritmos sem quantum"
+            else "não definida para algoritmos sem quantum"
         )
-        teto = resultado.teto_recurso if resultado.teto_recurso is not None else "nao definido"
+        teto = resultado.teto_recurso if resultado.teto_recurso is not None else "não definido"
         self.resumo_var.set(
-            f"{resultado.algoritmo} | trocas: {resultado.trocas_contexto} | eficiencia: {eficiencia} | teto R: {teto}"
+            f"{resultado.algoritmo} | trocas: {resultado.trocas_contexto} | eficiência: {eficiencia} | teto R: {teto}"
         )
         self.medias_var.set(
-            "Medias: "
+            "Médias: "
             f"tt={resultado.medias['tt']:.2f}  "
             f"tp={resultado.medias['tp']:.2f}  "
             f"tw={resultado.medias['tw']:.2f}  "
-            f"ate 1a execucao={resultado.medias['primeira_execucao']:.2f}"
+            f"até 1a execução={resultado.medias['primeira_execucao']:.2f}"
         )
         self._desenhar_linha_tempo(resultado)
         self._mostrar_sequencia(resultado)
@@ -447,57 +519,71 @@ class AplicacaoSimulador(tk.Tk):
         self.canvas.create_text(margem_esq - 52, topo - 22, text="CPU", anchor=tk.W, font=("Segoe UI", 9, "bold"))
         for tempo in range(0, tempo_max + 1):
             x = margem_esq + tempo * escala
-            self.canvas.create_line(x, topo - 30, x, altura_total - 38, fill="#edf0f5")
-            self.canvas.create_text(x, topo - 36, text=str(tempo), font=("Segoe UI", 8), fill="#5d6470")
+            self.canvas.create_line(x, topo - 30, x, altura_total - 38, fill="#e3eeec")
+            self.canvas.create_text(x, topo - 36, text=str(tempo), font=("Segoe UI", 8), fill="#587270")
 
         y_cpu = topo
-        self.canvas.create_line(margem_esq, y_cpu + 12, margem_esq + tempo_max * escala, y_cpu + 12, fill="#c9ced8")
+        self.canvas.create_line(margem_esq, y_cpu + 12, margem_esq + tempo_max * escala, y_cpu + 12, fill="#b8cecb")
         for intervalo in resultado.linha_tempo:
-            if intervalo.tipo not in {"troca", "ocioso"}:
+            if intervalo.tipo not in {"execucao", "troca", "ocioso"}:
                 continue
             x1 = margem_esq + intervalo.inicio * escala
             x2 = margem_esq + intervalo.fim * escala
-            cor = "#f2c94c" if intervalo.tipo == "troca" else "#cfd5df"
-            texto = "CTX" if intervalo.tipo == "troca" else "IDLE"
+            if intervalo.tipo == "execucao" and intervalo.tarefa_id is not None:
+                cor = self._cor_tarefa(intervalo.tarefa_id)
+                texto = ""
+            elif intervalo.tipo == "troca":
+                cor = "#f4b942"
+                texto = "CTX"
+            else:
+                cor = "#cbd5d9"
+                texto = "IDLE"
             self.canvas.create_rectangle(x1, y_cpu, x2, y_cpu + 24, fill=cor, outline=cor)
-            if x2 - x1 >= 20:
-                self.canvas.create_text((x1 + x2) / 2, y_cpu + 12, text=texto, font=("Segoe UI", 8))
+            if texto and x2 - x1 >= 20:
+                self.canvas.create_text((x1 + x2) / 2, y_cpu + 12, text=texto, font=("Segoe UI", 8, "bold"), fill="#42320a" if intervalo.tipo == "troca" else "#405557")
 
         for indice, tarefa in enumerate(resultado.tarefas, start=1):
             y = topo + indice * altura_linha
             self.canvas.create_text(margem_esq - 72, y + 12, text=f"t{tarefa.id}", anchor=tk.W, font=("Segoe UI", 9, "bold"))
-            self.canvas.create_line(margem_esq, y + 12, margem_esq + tempo_max * escala, y + 12, fill="#c9ced8")
+            self.canvas.create_line(margem_esq, y + 12, margem_esq + tempo_max * escala, y + 12, fill="#b8cecb")
 
             for intervalo in resultado.bloqueios_por_tarefa.get(tarefa.id, []):
                 x1 = margem_esq + intervalo.inicio * escala
                 x2 = margem_esq + intervalo.fim * escala
-                self.canvas.create_rectangle(x1, y, x2, y + 24, fill="#f7b7b7", outline="#d64545")
+                self.canvas.create_rectangle(x1, y, x2, y + 24, fill="#fee2e2", outline="#fca5a5")
                 if x2 - x1 >= 22:
-                    self.canvas.create_text((x1 + x2) / 2, y + 12, text="R", font=("Segoe UI", 8))
+                    self.canvas.create_text((x1 + x2) / 2, y + 12, text="R", font=("Segoe UI", 8), fill="#991b1b")
 
             for intervalo in resultado.execucoes_por_tarefa.get(tarefa.id, []):
                 x1 = margem_esq + intervalo.inicio * escala
                 x2 = margem_esq + intervalo.fim * escala
-                self.canvas.create_rectangle(x1, y, x2, y + 24, fill="#2f80ed", outline="#1d5fbf")
+                cor_tarefa = self._cor_tarefa(tarefa.id)
+                self.canvas.create_rectangle(x1, y, x2, y + 24, fill=cor_tarefa, outline=cor_tarefa)
                 if x2 - x1 >= 20:
-                    self.canvas.create_text((x1 + x2) / 2, y + 12, text=f"t{tarefa.id}", fill="#ffffff", font=("Segoe UI", 8, "bold"))
+                    self.canvas.create_text((x1 + x2) / 2, y + 12, text=f"t{tarefa.id}", fill="#073b38", font=("Segoe UI", 8, "bold"))
 
             for intervalo in resultado.recurso_intervalos:
                 if intervalo.tarefa_id != tarefa.id:
                     continue
                 x1 = margem_esq + intervalo.inicio * escala
                 x2 = margem_esq + intervalo.fim * escala
-                self.canvas.create_rectangle(x1, y - 7, x2, y - 1, fill="#219653", outline="#219653")
+                self.canvas.create_rectangle(x1, y - 7, x2, y - 1, fill="#84cc16", outline="#84cc16")
 
         legenda_y = altura_total - 30
-        self._legenda(self.canvas, margem_esq, legenda_y, "#2f80ed", "execucao")
-        self._legenda(self.canvas, margem_esq + 110, legenda_y, "#f2c94c", "troca")
-        self._legenda(self.canvas, margem_esq + 205, legenda_y, "#f7b7b7", "suspensa")
-        self._legenda(self.canvas, margem_esq + 320, legenda_y, "#219653", "recurso R")
+        legenda_x = margem_esq
+        for tarefa in resultado.tarefas:
+            self._legenda(self.canvas, legenda_x, legenda_y, self._cor_tarefa(tarefa.id), f"t{tarefa.id}")
+            legenda_x += 58
+        self._legenda(self.canvas, legenda_x + 8, legenda_y, "#f4b942", "troca")
+        self._legenda(self.canvas, legenda_x + 108, legenda_y, "#fee2e2", "suspensa")
+        self._legenda(self.canvas, legenda_x + 230, legenda_y, "#84cc16", "recurso R")
 
     def _legenda(self, canvas: tk.Canvas, x: int, y: int, cor: str, texto: str) -> None:
         canvas.create_rectangle(x, y, x + 16, y + 12, fill=cor, outline=cor)
-        canvas.create_text(x + 22, y + 6, text=texto, anchor=tk.W, font=("Segoe UI", 8))
+        canvas.create_text(x + 22, y + 6, text=texto, anchor=tk.W, font=("Segoe UI", 8), fill="#24403e")
+
+    def _cor_tarefa(self, tarefa_id: int) -> str:
+        return self.CORES_TAREFAS[(tarefa_id - 1) % len(self.CORES_TAREFAS)]
 
     def _mostrar_sequencia(self, resultado: ResultadoSimulacao) -> None:
         partes = [f"t{tid}[{inicio},{fim})" for tid, inicio, fim in resultado.sequencia_execucao()]
@@ -510,11 +596,11 @@ class AplicacaoSimulador(tk.Tk):
             for tid, intervalos in resultado.bloqueios_por_tarefa.items()
             for intervalo in intervalos
         ]
-        texto = "Sequencia: " + " ".join(partes)
+        texto = "Sequência: " + " ".join(partes)
         if recursos:
             texto += "\nRecurso: " + " ".join(recursos)
         if bloqueios:
-            texto += "\nSuspensoes: " + " ".join(bloqueios)
+            texto += "\nSuspensões: " + " ".join(bloqueios)
         self.sequencia_texto.delete("1.0", tk.END)
         self.sequencia_texto.insert("1.0", texto)
 
@@ -557,8 +643,8 @@ class AplicacaoSimulador(tk.Tk):
         recurso_inicio = None
         recurso_duracao = 0
         if recurso_inicio_texto or recurso_duracao_texto:
-            recurso_inicio = self._inteiro(recurso_inicio_texto, "R apos exec.")
-            recurso_duracao = self._inteiro(recurso_duracao_texto, "R duracao")
+            recurso_inicio = self._inteiro(recurso_inicio_texto, "R após exec.")
+            recurso_duracao = self._inteiro(recurso_duracao_texto, "R duração")
 
         return TarefaEntrada(
             id=self._inteiro(self.id_var.get(), "ID"),
@@ -572,11 +658,11 @@ class AplicacaoSimulador(tk.Tk):
     def _inteiro(self, texto: str, campo: str) -> int:
         valor = str(texto).strip()
         if valor == "":
-            raise SimulacaoErro(f"O campo {campo} nao pode ficar vazio.")
+            raise SimulacaoErro(f"O campo {campo} não pode ficar vazio.")
         try:
             return int(valor)
         except ValueError as exc:
-            raise SimulacaoErro(f"O campo {campo} deve ser numerico inteiro.") from exc
+            raise SimulacaoErro(f"O campo {campo} deve ser numérico inteiro.") from exc
 
     def _mostrar_erro(self, erro: Exception) -> None:
         messagebox.showerror("Erro", str(erro))
