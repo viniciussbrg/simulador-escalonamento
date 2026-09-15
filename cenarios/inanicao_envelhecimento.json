@@ -1,0 +1,53 @@
+{
+  "versao": 1,
+  "tarefas": [
+    {
+      "id": 1,
+      "ingresso": 0,
+      "tp": 4,
+      "prioridade": 1,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    },
+    {
+      "id": 2,
+      "ingresso": 0,
+      "tp": 2,
+      "prioridade": 5,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    },
+    {
+      "id": 3,
+      "ingresso": 2,
+      "tp": 2,
+      "prioridade": 5,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    },
+    {
+      "id": 4,
+      "ingresso": 4,
+      "tp": 2,
+      "prioridade": 5,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    },
+    {
+      "id": 5,
+      "ingresso": 6,
+      "tp": 2,
+      "prioridade": 5,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    },
+    {
+      "id": 6,
+      "ingresso": 8,
+      "tp": 2,
+      "prioridade": 5,
+      "recurso_inicio": null,
+      "recurso_duracao": 0
+    }
+  ]
+}
