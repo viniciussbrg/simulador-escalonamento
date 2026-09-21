@@ -1,0 +1,35 @@
+{
+  "formato": "simulador-escalonamento/1",
+  "descricao": "Cenario 4.5 final: o teto cobra mesmo sem disputa. Testa tambem o salto do relogio no intervalo ocioso entre 9 e 12.",
+  "parametros": {
+    "quantum": 2,
+    "custo_troca": 0,
+    "alfa": 0,
+    "protocolo": "teto",
+    "algoritmo": "PRIOp"
+  },
+  "tarefas": [
+    {
+      "id": 1,
+      "ingresso": 0,
+      "tp": 6,
+      "prioridade": 1,
+      "sc_inicio": 1,
+      "sc_duracao": 4
+    },
+    {
+      "id": 2,
+      "ingresso": 2,
+      "tp": 3,
+      "prioridade": 2
+    },
+    {
+      "id": 4,
+      "ingresso": 12,
+      "tp": 2,
+      "prioridade": 4,
+      "sc_inicio": 0,
+      "sc_duracao": 1
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "formato": "simulador-escalonamento/1",
+  "descricao": "Cenario 4.6: inanicao sob PRIOc. Suba alfa para 1 e depois 2 e veja t1 ser atendida mais cedo.",
+  "parametros": {
+    "quantum": 2,
+    "custo_troca": 0,
+    "alfa": 0,
+    "protocolo": "nenhum",
+    "algoritmo": "PRIOc"
+  },
+  "tarefas": [
+    {
+      "id": 1,
+      "ingresso": 0,
+      "tp": 4,
+      "prioridade": 1
+    },
+    {
+      "id": 2,
+      "ingresso": 0,
+      "tp": 2,
+      "prioridade": 5
+    },
+    {
+      "id": 3,
+      "ingresso": 2,
+      "tp": 2,
+      "prioridade": 5
+    },
+    {
+      "id": 4,
+      "ingresso": 4,
+      "tp": 2,
+      "prioridade": 5
+    },
+    {
+      "id": 5,
+      "ingresso": 6,
+      "tp": 2,
+      "prioridade": 5
+    },
+    {
+      "id": 6,
+      "ingresso": 8,
+      "tp": 2,
+      "prioridade": 5
+    }
+  ]
+}

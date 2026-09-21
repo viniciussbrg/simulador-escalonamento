@@ -1,118 +1,96 @@
-# Simulador de Escalonamento de Tarefas
+# Simulador de Escalonamento de Tarefas — Grupo 10
 
-Projeto prático da disciplina de **Sistemas Operacionais**.
+## Integrantes
 
-O trabalho consiste em desenvolver um simulador de escalonamento de tarefas em
-um processador, capaz de reproduzir os algoritmos vistos em sala e o fenômeno
-da inversão de prioridades, com seus mecanismos de correção.
+* João Andrade
+* Roger Rocha
+* Samar Victor
 
-O simulador implementa seis algoritmos:
+## Como executar
 
-- **FCFS** — First-Come, First-Served
-- **SJF** — Shortest Job First
-- **SRTF** — Shortest Remaining Time First
-- **RR** — Round-Robin
-- **PRIOc** — Prioridade cooperativa
-- **PRIOp** — Prioridade preemptiva
+Clique duas vezes em `Simulador.exe`.
 
-E os mecanismos de tratamento de recursos de uso exclusivo: **inversão de
-prioridades**, **herança de prioridade**, **teto de prioridade** e
-**envelhecimento**.
+Não é necessário instalar nada.
 
-## Documentos do projeto
+## Descrição
 
-Leia os dois antes de começar.
+Este projeto é um simulador de algoritmos de escalonamento de processos desenvolvido em Python. Ele foi construído para reproduzir numericamente cenários de referência e expor fenômenos complexos de concorrência, como a inversão de prioridades e seus respectivos mecanismos de correção.
 
-- [📄 Enunciado](./documentos/01_enunciado.pdf) — o que o simulador precisa
-  fazer: os dez requisitos e os cenários de referência
-- [📘 Guia de documentação](./documentos/02_guia_documentacao.pdf) — o que
-  escrever no README, nos tutoriais e na documentação técnica
+A arquitetura do código foi estruturada com base na separação estrita entre o mecanismo de simulação e a política de escalonamento. O sistema interage com o usuário por meio de uma interface gráfica.
 
-O enunciado descreve *o que fazer*; o guia de documentação descreve *como
-organizar a entrega*.
+## Estrutura do repositório
 
-## Organização deste repositório
+A entrega tem duas camadas: a raiz guarda o executável pronto e cópias dos
+dados/documentação que ele usa; a pasta `simulador/` guarda o código-fonte
+completo (é a partir dela que o `Simulador.exe` foi gerado).
 
-A branch `main` guarda apenas os documentos do projeto e **nunca recebe
-entregas**. Cada grupo tem uma **branch dedicada**, onde a entrega aprovada é
-incorporada.
-
-### Estado inicial
-
-```
+```text
 simulador-escalonamento/
-└── main
-    ├── README.md
-    ├── .gitignore
-    └── documentos/
+├── README.md            Documentação inicial do projeto (este arquivo)
+├── Simulador.exe        Executável Windows pronto (não exige Python instalado)
+├── cenarios/            Cópia dos cenários de exemplo em JSON usada pelo .exe
+├── docs/                Cópia dos tutoriais e da documentação técnica em PDF
+└── simulador/           Código-fonte do simulador
+    ├── main.py              Ponto de entrada por linha de comando
+    ├── main.pyw             Ponto de entrada por duplo clique, sem console
+    ├── EXECUTAR.bat         Abre o programa no Windows sem usar o terminal
+    ├── EXECUTAR.command     Abre o programa no macOS/Linux sem usar o terminal
+    ├── model/               Estrutura da tarefa e gravação/carregamento de cenários
+    ├── control/             Mecanismo de simulação, políticas e gerador de cenários
+    ├── view/                Interface gráfica e relatório de métricas/diagrama
+    ├── tests/               Suíte automatizada (unittest)
+    ├── cenarios/            Cenários de exemplo em JSON usados pelo código-fonte
+    ├── docs/                Fonte dos tutoriais e da documentação técnica
+    └── assets/icon.ico      Ícone do programa
 ```
 
-### Ao longo do semestre
+## Arquivos de código
 
-```
-simulador-escalonamento/
-├── main       Documentos do projeto (não muda)
-├── grupo1     Entrega do grupo 1
-├── grupo2     Entrega do grupo 2
-├── ...
-└── grupo8     Entrega do grupo 8
-```
+* `simulador/model/tarefa.py` — estrutura e validação de uma tarefa (ingresso, tp, prioridade, seção crítica)
+* `simulador/model/cenario.py` — gravação e carregamento de cenários em JSON
+* `simulador/control/motor.py` — laço de simulação (mecanismo): relógio, fila de prontas, recurso R, herança, teto, envelhecimento e métricas
+* `simulador/control/politicas.py` — os seis algoritmos de escalonamento (política)
+* `simulador/control/gerador.py` — sorteio de tarefas/cenários e comparação em lote
+* `simulador/view/janela.py` — janela da interface gráfica (tkinter)
+* `simulador/view/relatorio.py` — formatação das métricas em texto e do diagrama de tempo
 
-**Como navegar entre as entregas:** clique no seletor de branches, no canto
-superior esquerdo, onde aparece `main`, e escolha a branch do grupo desejado.
+## Funcionalidades
 
-## Como entregar
+|O que faz|Onde|
+|-|-|
+|Os seis algoritmos|`simulador/control/politicas.py`|
+|Métricas por tarefa e eficiência|`simulador/control/motor.py`|
+|Recurso de uso exclusivo|`simulador/control/motor.py`|
+|Herança e teto de prioridade|`simulador/control/motor.py`|
+|Envelhecimento|`simulador/control/motor.py`|
+|Sorteio e comparação de cenários|`simulador/control/gerador.py`|
+|Gravar/carregar cenário|`simulador/model/cenario.py`|
+|Interface gráfica|`simulador/view/janela.py`|
 
-A entrega é feita por **fork + pull request**, conforme o guia de entrega
-distribuído em aula:
+## Documentação
 
-1. **Fazer o fork** deste repositório (botão `Fork`, no canto superior direito)
-2. **Clonar o fork** na máquina de um dos integrantes
-3. **Desenvolver o trabalho** no fork
-4. **Fazer commit e push** a cada avanço, ao longo de todo o desenvolvimento, e
-   não apenas no final. O commit registra a alteração no seu computador; só o
-   push a envia para o fork, que é o que o GitHub enxerga
-5. **Abrir um pull request para a branch do seu grupo**, com o título no
-   formato:
+* [Tutorial de execução](./docs/tutorial_execucao.pdf)
+* [Tutorial de uso](./docs/tutorial_uso.pdf)
+* [Documentação técnica](./docs/documentacao_projeto.pdf)
 
-```
-Entrega - Grupo XX - Nome dos integrantes
-```
+## Requisitos de ambiente
 
-> **O erro mais comum:** o GitHub oferece `main` como destino por padrão. A
-> `main` é protegida e não recebe entregas, então um pull request apontado para
-> ela é devolvido sem análise. Troque o campo `base` para a branch do seu grupo
-> **antes** de criar o pull request.
+* Python 3.10+
+* Bibliotecas: Nenhuma biblioteca externa é necessária (apenas biblioteca padrão do Python).
 
-## Estrutura esperada dentro do fork
+## Por onde começar
 
-```
-simulador-escalonamento/
-├── README.md              como executar, integrantes, funcionalidades
-├── Simulador.exe          o arquivo que abre com dois cliques
-├── main.py                ponto de entrada do código-fonte
-├── simulador/             código-fonte
-├── cenarios/              conjuntos de tarefas gravados
-└── docs/                  tutoriais e documentação técnica
-```
+1. Abra o programa e siga o tutorial de execução
+2. Reproduza um cenário de exemplo pelo tutorial de uso
+3. Consulte a documentação técnica para entender o código
 
-Há um modelo de README de grupo em
-[`documentos/modelo_readme_do_grupo.md`](./documentos/modelo_readme_do_grupo.md).
-Detalhes do conteúdo no
-[guia de documentação](./documentos/02_guia_documentacao.pdf).
+## Uso de assistentes de programação
 
-## Entregas dos grupos
+Os assistentes de programação foram utilizados para:
 
-Entregas aprovadas e incorporadas ao repositório:
+* Auxiliar na estruturação do `README.md` e da documentação técnica.
+* Explicar a implementação de algoritmos específicos e mecanismos, como a herança de prioridade.
+* Fornecer auxílio com o código-fonte base para o mecanismo de simulação e as políticas de escalonamento (`simulador/control/motor.py` e `simulador/control/politicas.py`).
+* Fornecer auxílio com o código para a suíte de testes normativos (`simulador/tests/test\_cenarios.py` e `simulador/tests/test\_entrada.py`).
+* Fornecer orientações sobre a implementação da interface com `tkinter`.
 
-<!-- Adicionar conforme os pull requests forem aceitos:
-- [Grupo 1](../../tree/grupo1) — Nomes dos integrantes
--->
-
-*Nenhuma entrega aprovada até o momento.*
-
-## Observações
-
-- O projeto precisa **abrir com dois cliques**, sem montagem de ambiente
-- Não há relatório escrito: a análise dos resultados é feita oralmente
-- Dúvidas: abrir uma **Issue** neste repositório

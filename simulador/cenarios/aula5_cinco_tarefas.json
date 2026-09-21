@@ -1,0 +1,43 @@
+{
+  "formato": "simulador-escalonamento/1",
+  "descricao": "Cenario 4.1 da Aula 5: reproduz as medias dos seis algoritmos. Com quantum 4 e custo 1 reproduz a secao 4.2.",
+  "parametros": {
+    "quantum": 2,
+    "custo_troca": 0,
+    "alfa": 0,
+    "protocolo": "nenhum",
+    "algoritmo": "RR"
+  },
+  "tarefas": [
+    {
+      "id": 1,
+      "ingresso": 0,
+      "tp": 5,
+      "prioridade": 2
+    },
+    {
+      "id": 2,
+      "ingresso": 0,
+      "tp": 2,
+      "prioridade": 3
+    },
+    {
+      "id": 3,
+      "ingresso": 1,
+      "tp": 4,
+      "prioridade": 1
+    },
+    {
+      "id": 4,
+      "ingresso": 3,
+      "tp": 1,
+      "prioridade": 4
+    },
+    {
+      "id": 5,
+      "ingresso": 5,
+      "tp": 2,
+      "prioridade": 5
+    }
+  ]
+}
