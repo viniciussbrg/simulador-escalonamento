@@ -1,0 +1,19 @@
+{
+  "parametros": {
+    "tq": 1,
+    "ttc": 1,
+    "alfa": 0
+  },
+  "tarefas": [
+    {
+      "id": 1,
+      "ingresso": 0,
+      "tp": 6,
+      "prioridade": 1,
+      "secao_critica": [
+        1,
+        4
+      ]
+    }
+  ]
+}

@@ -1,50 +1,46 @@
 # ---------------------------------------------------------------
-# A linguagem do projeto e livre. Este arquivo cobre os restos mais
-# comuns de varias linguagens.
+# Simulador de Escalonamento de Tarefas
+# Sistemas Operacionais
 #
-# IMPORTANTE: a pasta em que o executavel e gerado (dist/, bin/,
-# target/, ...) NAO deve ser ignorada, porque o executavel faz
-# parte da entrega. Se acrescentar regras, revise este ponto.
+# ATENCAO: nao acrescente "dist/" sem ler o comentario da secao
+# PyInstaller abaixo. O executavel faz parte da entrega.
 # ---------------------------------------------------------------
-
-# Artefatos intermediarios de compilacao
-build/
-obj/
-out/
-*.o
-*.obj
-*.class
-*.spec
 
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+
+# Ambientes virtuais
 .venv/
 venv/
 env/
+myenv/
+ENV/
 
-# Java, C#, Node
-*.jar.tmp
-node_modules/
+# PyInstaller
+# O executavel entregue fica na RAIZ do repositorio, como
+# Simulador.exe. As pastas de trabalho do PyInstaller nao entram:
+# sao geradas a cada build e somam centenas de megabytes.
+build/
+dist/
+*.spec
 
 # Editores
 .vscode/
 .idea/
 *.swp
+*.swo
 
 # Sistema operacional
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Saidas geradas pelo simulador durante o uso
-saida/
+# Jupyter
+.ipynb_checkpoints/
 
-# LaTeX
-*.aux
+# Saidas temporarias de execucao
 *.log
-*.out
-*.synctex.gz
-*.toc
-*.fls
-*.fdb_latexmk
+saida_temp/

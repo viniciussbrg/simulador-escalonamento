@@ -1,0 +1,184 @@
+{
+  "_sobre": "Cenarios de validacao transcritos do enunciado (secao 4). Os valores esperados sao os corretos: reproduzi-los com as convencoes C1 a C10 e o que demonstra que o simulador funciona. Prioridade: valor maior = prioridade mais alta. secao_critica: [inicio, fim) medido no tempo de execucao propria da tarefa (C7).",
+
+  "cenario_4_1_aula5": {
+    "descricao": "Cenario da Aula 5. Sem custo de troca de contexto. Valida os seis algoritmos.",
+    "parametros": { "ttc": 0, "tq": 2 },
+    "tarefas": [
+      { "id": 1, "ingresso": 0, "tp": 5, "prioridade": 2 },
+      { "id": 2, "ingresso": 0, "tp": 2, "prioridade": 3 },
+      { "id": 3, "ingresso": 1, "tp": 4, "prioridade": 1 },
+      { "id": 4, "ingresso": 3, "tp": 1, "prioridade": 4 },
+      { "id": 5, "ingresso": 5, "tp": 2, "prioridade": 5 }
+    ],
+    "esperado": {
+      "FCFS":  { "Tt": 8.0, "Tw": 5.2, "primeira_exec": 5.2, "trocas": 5 },
+      "RR":    { "Tt": 8.4, "Tw": 5.6, "primeira_exec": 2.8, "trocas": 8, "tq": 2 },
+      "SJF":   { "Tt": 5.8, "Tw": 3.0, "primeira_exec": 3.0, "trocas": 5 },
+      "SRTF":  { "Tt": 5.4, "Tw": 2.6, "primeira_exec": 2.4, "trocas": 6 },
+      "PRIOc": { "Tt": 6.6, "Tw": 3.8, "primeira_exec": 3.8, "trocas": 5 },
+      "PRIOp": { "Tt": 5.6, "Tw": 2.8, "primeira_exec": 2.2, "trocas": 7 }
+    }
+  },
+
+  "cenario_4_2_com_custo_de_troca": {
+    "descricao": "As mesmas cinco tarefas do 4.1, agora com ttc = 1 e tq = 4. Valida C5: o custo e descontado da fatia, nunca somado a ela.",
+    "parametros": { "ttc": 1, "tq": 4 },
+    "tarefas": "identicas ao cenario_4_1_aula5",
+    "esperado": {
+      "FCFS": { "Tt": 11.0, "Tw": 8.2, "eficiencia": null },
+      "RR":   { "Tt": 13.4, "Tw": 10.6, "eficiencia": 0.8 }
+    },
+    "nota": "eficiencia null significa que o programa deve indicar 'nao definida', e nao exibir um valor. E = tq / (tq + ttc) = 4/5 sob Round-Robin."
+  },
+
+  "cenario_4_3_inversao_de_prioridades": {
+    "descricao": "Aula 6. PRIOp sem nenhum protocolo de correcao. Apenas t1 (menor prioridade) e t4 (maior prioridade) disputam o recurso R.",
+    "parametros": { "ttc": 0, "algoritmo": "PRIOp", "protocolo": "nenhum" },
+    "tarefas": [
+      { "id": 1, "ingresso": 0, "tp": 6, "prioridade": 1, "secao_critica": [1, 5] },
+      { "id": 2, "ingresso": 4, "tp": 4, "prioridade": 2, "secao_critica": null },
+      { "id": 3, "ingresso": 6, "tp": 3, "prioridade": 3, "secao_critica": null },
+      { "id": 4, "ingresso": 2, "tp": 3, "prioridade": 4, "secao_critica": [1, 2] }
+    ],
+    "esperado": {
+      "por_tarefa": [
+        { "id": 1, "conclusao": 16, "tt": 16, "tw": 10 },
+        { "id": 2, "conclusao": 11, "tt": 7,  "tw": 3  },
+        { "id": 3, "conclusao": 9,  "tt": 3,  "tw": 0  },
+        { "id": 4, "conclusao": 15, "tt": 13, "tw": 10 }
+      ],
+      "Tt": 9.75,
+      "Tw": 5.75
+    },
+    "nota": "Entre os instantes 4 e 11, t2 e t3 ocupam o processador enquanto t4, a mais prioritaria, permanece bloqueada. Nenhuma das duas usa R. Esse e o fenomeno da inversao."
+  },
+
+  "cenario_4_4_heranca_de_prioridade": {
+    "descricao": "As mesmas quatro tarefas do 4.3, com heranca de prioridade habilitada.",
+    "parametros": { "ttc": 0, "algoritmo": "PRIOp", "protocolo": "heranca" },
+    "tarefas": "identicas ao cenario_4_3_inversao_de_prioridades",
+    "esperado": {
+      "por_tarefa": [
+        { "id": 1, "conclusao": 16, "tt": 16, "tw": 10 },
+        { "id": 2, "conclusao": 15, "tt": 11, "tw": 7  },
+        { "id": 3, "conclusao": 11, "tt": 5,  "tw": 2  },
+        { "id": 4, "conclusao": 8,  "tt": 6,  "tw": 3  }
+      ],
+      "Tt": 9.5,
+      "Tw": 5.5
+    },
+    "nota": "No instante 3, t4 bloqueia e t1 herda a prioridade 4. A heranca e revertida na liberacao do recurso, no instante 6. O bloqueio de t4 cai de 10 para 3 unidades."
+  },
+
+  "cenario_4_5_teto_de_prioridade": {
+    "descricao": "O mesmo cenario do 4.3, sob o protocolo de teto. O teto de R vale 4, a maior prioridade entre as tarefas que declaram secao critica nele (t1 e t4).",
+    "parametros": { "ttc": 0, "algoritmo": "PRIOp", "protocolo": "teto" },
+    "tarefas": "identicas ao cenario_4_3_inversao_de_prioridades",
+    "esperado": {
+      "por_tarefa": [
+        { "id": 1, "conclusao": 16, "tt": 16, "tw": 10 },
+        { "id": 2, "conclusao": 15, "tt": 11, "tw": 7  },
+        { "id": 3, "conclusao": 11, "tt": 5,  "tw": 2  },
+        { "id": 4, "conclusao": 8,  "tt": 6,  "tw": 3  }
+      ],
+      "Tt": 9.5,
+      "Tw": 5.5,
+      "sequencia_execucao": "t1[0,5) t4[5,8) t3[8,11) t2[11,15) t1[15,16)"
+    },
+    "nota": "As medias coincidem com as da heranca, mas o caminho e outro: t1 ja valia 4 desde o instante 1, de modo que t4 sequer recebe o processador antes de R ser liberado. O bloqueio nao foi encurtado de 3 para 0, foi prevenido. O simulador precisa exibir essa diferenca."
+  },
+
+  "cenario_4_5b_preco_do_teto": {
+    "descricao": "O custo do teto quando a disputa nunca chega a ocorrer. t4 so ingressa no instante 12, muito depois de R ter sido liberado, e portanto nunca disputa nada. Ainda assim o teto elevou t1 durante toda a secao critica e adiou t2.",
+    "parametros": { "ttc": 0, "algoritmo": "PRIOp" },
+    "tarefas": [
+      { "id": 1, "ingresso": 0,  "tp": 6, "prioridade": 1, "secao_critica": [1, 5] },
+      { "id": 2, "ingresso": 2,  "tp": 3, "prioridade": 2, "secao_critica": null },
+      { "id": 4, "ingresso": 12, "tp": 2, "prioridade": 4, "secao_critica": [0, 1] }
+    ],
+    "esperado": {
+      "heranca": {
+        "sequencia_execucao": "t1[0,2) t2[2,5) t1[5,9) t4[12,14)",
+        "tw_t2": 0,
+        "Tw": 1.0
+      },
+      "teto": {
+        "sequencia_execucao": "t1[0,5) t2[5,8) t1[8,9) t4[12,14)",
+        "tw_t2": 3,
+        "Tw": 2.0
+      }
+    },
+    "nota": "Este cenario tem intervalo ocioso no meio da simulacao (entre 9 e 12). Valida o salto do relogio para o proximo instante de ingresso quando nenhuma tarefa esta pronta."
+  },
+
+  "cenario_4_6_inanicao_e_envelhecimento": {
+    "descricao": "Seis tarefas sob prioridade cooperativa. t1 tem prioridade 1 e concorre com cinco tarefas de prioridade 5 que ingressam de duas em duas unidades de tempo.",
+    "parametros": { "ttc": 0, "algoritmo": "PRIOc" },
+    "tarefas": [
+      { "id": 1, "ingresso": 0, "tp": 4, "prioridade": 1 },
+      { "id": 2, "ingresso": 0, "tp": 2, "prioridade": 5 },
+      { "id": 3, "ingresso": 2, "tp": 2, "prioridade": 5 },
+      { "id": 4, "ingresso": 4, "tp": 2, "prioridade": 5 },
+      { "id": 5, "ingresso": 6, "tp": 2, "prioridade": 5 },
+      { "id": 6, "ingresso": 8, "tp": 2, "prioridade": 5 }
+    ],
+    "esperado": {
+      "sem_envelhecimento": {
+        "alpha": 0,
+        "sequencia_execucao": "t2[0,2) t3[2,4) t4[4,6) t5[6,8) t6[8,10) t1[10,14)",
+        "tw_t1": 10,
+        "Tw": 1.67
+      },
+      "alpha_1": {
+        "alpha": 1,
+        "sequencia_execucao": "t2[0,2) t3[2,4) t1[4,8) t4[8,10) t5[10,12) t6[12,14)",
+        "tw_t1": 4,
+        "Tw": 2.67
+      },
+      "alpha_2": {
+        "alpha": 2,
+        "sequencia_execucao": "t2[0,2) t1[2,6) t3[6,8) t4[8,10) t5[10,12) t6[12,14)",
+        "tw_t1": 2,
+        "Tw": 3.0
+      }
+    },
+    "nota": "Com alpha = 1, a prioridade efetiva de t1 cruza o valor 5 no instante 4 e ela passa a frente. Quanto maior alpha, mais cedo o cruzamento, e mais as tarefas prioritarias pagam: Tw do conjunto sobe de 1,67 para 3,00. O envelhecimento nao e um ganho, e uma troca."
+  },
+
+  "cenario_4_7_lote_gerado": {
+    "descricao": "Lote de cenarios sorteados. NAO deve ser reproduzido numericamente: cada execucao sorteia outros cenarios e as medias mudam. O unico resultado que precisa se repetir e a ordenacao.",
+    "parametros": {
+      "quantidade_de_cenarios": 50,
+      "tarefas_por_cenario": 5,
+      "ingresso_maximo": 8,
+      "duracao_maxima": 6,
+      "prioridade_maxima": 5,
+      "tq": 2,
+      "ttc": 0
+    },
+    "amostra_ilustrativa": {
+      "FCFS":  { "Tt": 7.99, "Tw": 4.36, "primeira_exec": 4.36 },
+      "RR":    { "Tt": 9.39, "Tw": 5.76, "primeira_exec": 2.03 },
+      "SJF":   { "Tt": 7.02, "Tw": 3.39, "primeira_exec": 3.39 },
+      "SRTF":  { "Tt": 6.84, "Tw": 3.20, "primeira_exec": 3.01 },
+      "PRIOc": { "Tt": 7.97, "Tw": 4.34, "primeira_exec": 4.34 },
+      "PRIOp": { "Tt": 8.23, "Tw": 4.60, "primeira_exec": 3.77 }
+    },
+    "invariante_a_verificar": "SRTF apresenta o menor Tw e Round-Robin o menor tempo medio ate a primeira execucao, em qualquer execucao com algumas dezenas de amostras."
+  },
+
+  "convencoes_obrigatorias": {
+    "C1": "O tempo e discreto e avanca de uma em uma unidade.",
+    "C2": "Prioridade: valor maior significa prioridade mais alta.",
+    "C3": "Desempate: menor instante de ingresso, depois menor identificador.",
+    "C4": "Ocorre troca de contexto sempre que a tarefa despachada e diferente da ultima que ocupou o processador, inclusive no primeiro despacho.",
+    "C5": "O custo da troca e descontado da fatia concedida, nunca somado a ela. Sob Round-Robin, a tarefa executa tq - ttc unidades uteis quando houve troca.",
+    "C6": "A tarefa que esgota o quantum volta a cauda da fila depois das que ingressaram naquele mesmo instante.",
+    "C7": "A secao critica e medida no tempo de execucao propria da tarefa. Inicio 1 e duracao 4 significa que a tarefa obtem o recurso apos executar 1 unidade util e o mantem ate ter executado 5.",
+    "C8": "tw = tt - tp. O tempo de espera engloba fila, suspensao no recurso e troca de contexto.",
+    "C9": "O teto de um recurso e calculado sobre as tarefas que declaram secao critica nele, ainda que a disputa nao chegue a ocorrer. Heranca e teto sao protocolos alternativos e nao se combinam.",
+    "C10": "O envelhecimento conta o tempo decorrido desde o ultimo despacho da tarefa, ou desde o seu ingresso caso ela ainda nao tenha executado.",
+    "relogio_ocioso": "Se nenhuma tarefa ingressou ainda, o relogio salta para o proximo instante de ingresso."
+  }
+}
