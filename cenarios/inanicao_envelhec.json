@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "chegada": 0,
+    "duracao": 4,
+    "prioridade": 1
+  },
+  {
+    "id": 2,
+    "chegada": 0,
+    "duracao": 2,
+    "prioridade": 5
+  },
+  {
+    "id": 3,
+    "chegada": 2,
+    "duracao": 2,
+    "prioridade": 5
+  },
+  {
+    "id": 4,
+    "chegada": 4,
+    "duracao": 2,
+    "prioridade": 5
+  },
+  {
+    "id": 5,
+    "chegada": 6,
+    "duracao": 2,
+    "prioridade": 5
+  },
+  {
+    "id": 6,
+    "chegada": 8,
+    "duracao": 2,
+    "prioridade": 5
+  }
+]
