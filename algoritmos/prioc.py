@@ -1,0 +1,76 @@
+import copy
+
+from models.periodo import Periodo, TipoPeriodo
+from models.resultado import ResultadoSimulacao
+from models.tarefa import Tarefa
+
+from algoritmos._montar_resultado import montar_resultado
+
+
+def prioc(tarefas: list[Tarefa], ctx_time: float, alpha: float | None = None) -> ResultadoSimulacao:
+    periodos_por_tarefa: dict[int, list[Periodo]] = {tarefa.id: [] for tarefa in tarefas}
+    alpha = alpha or 0
+
+    tarefas_ordenadas = sorted(tarefas, key=lambda t: (t.chegada, t.id))
+    tempo_atual = tarefas_ordenadas[0].chegada
+    tarefas_pendentes = copy.deepcopy(tarefas_ordenadas)
+    prioridade_original_por_id = {tarefa.id: tarefa.prioridade for tarefa in tarefas_ordenadas}
+
+    def _encher_fila(tarefas_pendentes, tempo_atual, fila):
+        for tarefa_iterada in tarefas_pendentes:
+            if tempo_atual >= tarefa_iterada.chegada and tarefa_iterada not in fila:
+                if not fila:
+                    fila.append(tarefa_iterada)
+                    continue
+                # se a fila não estiver vazia, adiciona a tarefa na posição correta
+                for i, tarefa_na_fila in enumerate(fila):
+                    if tarefa_iterada.prioridade > tarefa_na_fila.prioridade:
+                        fila.insert(i, tarefa_iterada)
+                        break
+                    else:
+                        # se for a ultima, adiciona no final
+                        if i == len(fila) - 1:
+                            fila.append(tarefa_iterada)
+                            break
+        return fila
+
+    def _envelhecer_pendentes(tarefas_pendentes, tempo_atual):
+        for tarefa in tarefas_pendentes:
+            if tarefa.chegada <= tempo_atual:
+                tempo_espera = tempo_atual - tarefa.chegada
+                tarefa.prioridade = prioridade_original_por_id[tarefa.id] + alpha * tempo_espera
+
+    while tarefas_pendentes:
+        _envelhecer_pendentes(tarefas_pendentes, tempo_atual)
+        fila = _encher_fila(tarefas_pendentes, tempo_atual, [])
+
+        if not fila:
+            # se a fila estiver vazia, incrementa o tempo até a próxima tarefa chegar
+            if tarefas_pendentes:
+                tempo_atual = min(tarefa.chegada for tarefa in tarefas_pendentes)
+            continue
+
+        tarefa_atual = fila.pop(0)
+        # add troca de contexto
+        periodos_por_tarefa[tarefa_atual.id].append(Periodo(
+            inicio=tempo_atual,
+            fim=tempo_atual + ctx_time,
+            tipo=TipoPeriodo.TROCA_CONTEXTO
+        ))
+        tempo_atual += ctx_time
+
+        # add execucao
+        periodos_por_tarefa[tarefa_atual.id].append(Periodo(
+            inicio=tempo_atual,
+            fim=tempo_atual + tarefa_atual.tp,
+            tipo=TipoPeriodo.EXECUCAO
+        ))
+        tempo_atual += tarefa_atual.tp
+
+        # remover tarefa da lista de pendentes
+        tarefas_pendentes.remove(tarefa_atual)
+
+    return montar_resultado(
+        tarefas, periodos_por_tarefa,
+        algoritmo="PRIOc", ctx_time=ctx_time, alpha=alpha,
+    )

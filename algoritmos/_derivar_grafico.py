@@ -1,0 +1,72 @@
+from models.periodo import TipoPeriodo
+from models.resultado import TarefaResultado
+from models.tarefa import Recurso
+
+
+def calcular_esperas(tr: TarefaResultado) -> list[tuple[float, float]]:
+    """Espera nunca é um Periodo de verdade (nenhum algoritmo registra) — é
+    derivada aqui: os buracos entre a chegada e o que os períodos já cobrem.
+    Não conta o tempo depois do último período (aí a tarefa já terminou)."""
+    periodos_ordenados = sorted(tr.periodos, key=lambda p: p.inicio)
+    esperas = []
+    posicao = tr.tarefa.chegada
+    for periodo in periodos_ordenados:
+        if periodo.inicio > posicao:
+            esperas.append((posicao, periodo.inicio))
+        posicao = max(posicao, periodo.fim)
+    return esperas
+
+
+def calcular_preempcoes(tr: TarefaResultado) -> list[float]:
+    """Instantes em que uma execução termina E algo de fato tomou o lugar
+    dela antes da próxima (outra tarefa rodou, ou ela mesma ficou bloqueada
+    esperando um recurso) — não basta ter mais um período EXECUCAO à frente:
+    alguns algoritmos (PRIOp, por reavaliar a cada chegada) reavaliam e
+    fecham/abrem um novo Periodo pra MESMA tarefa mesmo quando ninguém a
+    tirou da CPU, e isso não deve contar como preempção. O critério é o
+    período seguinte não começar exatamente onde esse terminou."""
+    periodos_execucao = sorted(
+        (p for p in tr.periodos if p.tipo == TipoPeriodo.EXECUCAO),
+        key=lambda p: p.inicio,
+    )
+    return [
+        atual.fim
+        for atual, proximo in zip(periodos_execucao, periodos_execucao[1:])
+        if atual.fim < proximo.inicio
+    ]
+
+
+def _tempo_absoluto_em(periodos_execucao, alvo_tempo_proprio):
+    """Acha o instante absoluto em que a tarefa alcança `alvo_tempo_proprio`
+    de execução própria — caminhando pelos períodos de EXECUCAO em ordem (é
+    só neles que o tempo próprio avança). None se ela nunca chega lá."""
+    executado = 0
+    for periodo in periodos_execucao:
+        duracao_periodo = periodo.fim - periodo.inicio
+        if executado + duracao_periodo >= alvo_tempo_proprio:
+            return periodo.inicio + (alvo_tempo_proprio - executado)
+        executado += duracao_periodo
+    return None
+
+
+def calcular_recursos_em_uso(tr: TarefaResultado) -> list[tuple[Recurso, float, float]]:
+    """Pra cada Recurso da tarefa (janela medida no tempo de execução própria
+    dela, C7), acha o instante absoluto em que ela alcança o início e o fim
+    da seção crítica. Entre os dois, ela reivindica o recurso o tempo todo —
+    inclusive em trechos que não são EXECUCAO (pendente ou até bloqueada
+    esperando a própria seção crítica): quem decide o que desenhar sólido
+    (rodando de fato) e o que desenhar vazado (reivindicado, mas parada) é o
+    gráfico (`views/screens/build_view/chart.py`), não esta função."""
+    periodos_execucao = sorted(
+        (p for p in tr.periodos if p.tipo == TipoPeriodo.EXECUCAO),
+        key=lambda p: p.inicio,
+    )
+
+    segmentos = []
+    for recurso in tr.tarefa.recursos:
+        abs_inicio = _tempo_absoluto_em(periodos_execucao, recurso.inicio)
+        abs_fim = _tempo_absoluto_em(periodos_execucao, recurso.inicio + recurso.duracao)
+        if abs_inicio is None or abs_fim is None:
+            continue
+        segmentos.append((recurso, abs_inicio, abs_fim))
+    return segmentos
